@@ -14,7 +14,7 @@ type SimpleSuppliesItem = {
   }
 }
 
-type SimpleResult = {
+type SimpleResultItem = {
   productId: number,
   codes: string[],
   qty: number,
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     const result = data.reduce((result, suppliesItem) => {
       const { code, product: { name, id } } = suppliesItem
       const existingResult = result?.[id]
-      const incResult: SimpleResult = existingResult
+      const incResult: SimpleResultItem = existingResult
         ? {
           ...existingResult,
           qty: existingResult.qty + 1,
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
           ...result,
           [id]: incResult
         }
-    }, {} as Record<number, SimpleResult>)
+    }, {} as Record<number, SimpleResultItem>)
 
     return NextResponse.json(Object.values(result))
 
