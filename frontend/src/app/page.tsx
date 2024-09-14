@@ -7,19 +7,15 @@ import {
 import styles from "./page.module.css";
 import MainPageContent from './components/MainPageContent'
 import { Suspense } from "react";
+
 const links = [
   { name: 'Home', href: '/home', icon: HomeIcon },
   { name: 'Main', href: '/', icon: UserGroupIcon },
 ];
 
-
-
-
 export default async function Home() {
   const link = links[0]
   const LinkIcon = link.icon;
-
-
 
   return (
     <div id="main-page" className={styles.page}>
