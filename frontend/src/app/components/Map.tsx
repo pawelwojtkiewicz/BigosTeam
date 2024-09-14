@@ -1,24 +1,24 @@
 'use client'
-import { useState, useEffect } from 'react';
+import {useState, useEffect, Dispatch, SetStateAction} from 'react';
 
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-const getCurrentUserPosition = (setPositionCallback) => {
+const getCurrentUserPosition = (setPositionCallback: Dispatch<SetStateAction<[number, number] | null>>) => {
   navigator.geolocation.getCurrentPosition((position) => {
     setPositionCallback([position.coords.latitude, position.coords.longitude]);
   });
 };
 
 export default function Map() {
-  const [currentUserPosition, setCurrentUserPosition] = useState(null);
+  const [currentUserPosition, setCurrentUserPosition] = useState<[number, number] | null>(null);
   useEffect(() => {
     getCurrentUserPosition(setCurrentUserPosition);
   }, []);
   
-  const randomPositionForPin = [49.768535, 19.038870]
+  const randomPositionForPin: [number, number] = [49.768535, 19.038870]
 
   return (
     currentUserPosition && (
