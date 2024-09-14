@@ -1,0 +1,14 @@
+.cache
+.cicd
+.git
+.idea
+.tmp
+.dockerignore
+.editorconfig
+.eslint*
+.strapi-updater.json
+build
+Dockerfile
+favicon.ico
+node_modules
+README.md
