@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "med_kits",
+  "info": {
+    "singularName": "med-kit",
+    "pluralName": "med-kits",
+    "displayName": "Med Kit"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "lat": {
+      "type": "float",
+      "required": true
+    },
+    "long": {
+      "type": "float",
+      "required": true
+    }
+  }
+}

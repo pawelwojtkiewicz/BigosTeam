@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "supplies",
+  "info": {
+    "singularName": "supply",
+    "pluralName": "supplies",
+    "displayName": "Supply",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "uid",
+      "required": true
+    },
+    "medKit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::med-kit.med-kit"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    }
+  }
+}
