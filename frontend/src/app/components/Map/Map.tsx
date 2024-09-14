@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react";
+import {useState, useEffect, Dispatch, SetStateAction} from 'react';
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
@@ -8,7 +8,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
 import MedKitPlaceIcon from "./MedKitPlaceIcon";
 
-const getCurrentUserPosition = (setPositionCallback) => {
+const getCurrentUserPosition = (setPositionCallback: Dispatch<SetStateAction<[number, number] | null>>) => {
   navigator.geolocation.getCurrentPosition((position) => {
     setPositionCallback([position.coords.latitude, position.coords.longitude]);
   });
@@ -20,7 +20,7 @@ const getNearestKits = (res) => {
 }
 
 export default function Map() {
-  const [currentUserPosition, setCurrentUserPosition] = useState(null);
+  const [currentUserPosition, setCurrentUserPosition] = useState<[number, number] | null>(null);
   const [nearestKits, setNearestKits] = useState(null);
   useEffect(() => {
     fetch('http://161.35.21.67:1337/api/med-kit/closest?lat=49.768535&long=19.038870&distance=500').then(data => data.json()).then(res => {
@@ -29,8 +29,6 @@ export default function Map() {
     })
     getCurrentUserPosition(setCurrentUserPosition);
   }, []);
-
-
 
   return (
     (currentUserPosition) && (
