@@ -6,6 +6,7 @@ import {
   HomeIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+
 const links = [
   { name: 'Home', href: '/home', icon: HomeIcon },
   { name: 'Main', href: '/', icon: UserGroupIcon },
@@ -14,10 +15,10 @@ const links = [
 export default function Home() {
   const link = links[1]
   const LinkIcon = link.icon;
+
   return (
     <div id="home-page">
       Witaj w domu
-
       <Badge badgeContent={4} color="primary">
         <MailIcon color="primary" />
         <Link
@@ -30,7 +31,6 @@ export default function Home() {
       </Link>
       </Badge>
       <Button variant="text">Text</Button>
-      
     </div>
   );
 }
