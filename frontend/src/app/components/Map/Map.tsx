@@ -15,6 +15,8 @@ import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
 import MedKitPlaceIcon, { MedKitPlaceIconEm } from "./MedKitPlaceIcon";
 import {Map as MapType} from 'leaflet'
+import {PopUp as ErrorPopup} from '@/app/components/PopUp/PopUp'
+import styles from "./Map.module.css"
 
 type MapProps = {
   defaultSize?: [number, number]
@@ -47,7 +49,7 @@ const Map: React.FC<MapProps> = ({
     assignments
   } = useMapData(defaultSize)
 
-  const poolingError = useMedKitPooling(navigateTo, filterValue, assignments);
+  const [poolingError, resetPoolingError] = useMedKitPooling(navigateTo, filterValue, assignments);
 
   const handleMarkerClick = (position: Coords, index: number) => {
     const kit = nearestMedKits?.[index];
@@ -80,6 +82,7 @@ const Map: React.FC<MapProps> = ({
       scrollWheelZoom={true}
       key={screenSize.toString()}
       style={{ width: `${screenSize[0]}px`, height: `${screenSize[1]}px` }}
+      className={styles.mapContainer}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -137,6 +140,18 @@ const Map: React.FC<MapProps> = ({
       filterValue={filterValue}
       assignments={assignments}
     />
+    <ErrorPopup
+      opened={!!poolingError}
+      onClose={() => {
+        resetPoolingError();
+        setFilterValue('');
+      }}
+      style={{
+        background: '#950000',
+        border: '3p solid #ff0000',
+        color: '#ffffff'
+      }}
+    >{poolingError}</ErrorPopup>
   </>);
 }
 

@@ -1,0 +1,27 @@
+.popUp {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  max-width: 80%;
+  text-align: center;
+  z-index: 1000;
+}
+
+.popupText {
+  margin: 0 0 20px 0;
+}
+
+.closeTrigger {
+  padding: 5px 10px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.controls {
+  text-align: center;
+}

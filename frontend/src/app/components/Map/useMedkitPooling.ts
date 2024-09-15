@@ -3,7 +3,7 @@ import {ContentsItem, fetchContents, MedKit} from '@/app/components/MedkitConten
 import {useEffect, useRef, useState} from 'react'
 
 const PULLING_INTERVAL = 1000
-export const useMedKitPooling = (destMedKit: MedKit | null, filterValue: string, assignments: Assignments | null): string => {
+export const useMedKitPooling = (destMedKit: MedKit | null, filterValue: string, assignments: Assignments | null): [string, () => void] => {
   const pulling = useRef<NodeJS.Timeout>()
   const [error, setError] = useState<string>('');
   useEffect(() => {
@@ -13,9 +13,10 @@ export const useMedKitPooling = (destMedKit: MedKit | null, filterValue: string,
         pulling.current = setTimeout(async () => {
           fetchContents(destMedKit.id)
             .then((contents: Record<string, ContentsItem>) => {
-              if (!!contents[filterValue]?.qty) {
-                const prodName = (assignments as Record<string, { name: string}>)[filterValue].name
-                setError(`Uwaga! ${prodName} nie jest dostępny!`)
+              if (!contents[filterValue]?.qty) {
+                const prodName = (assignments as Record<string, { name: string}>)[filterValue].name;
+                setError(`Uwaga! ${prodName} nie jest dostępny!`);
+                return
               }
             })
           queueRequest();
@@ -30,5 +31,5 @@ export const useMedKitPooling = (destMedKit: MedKit | null, filterValue: string,
     }
   }, [destMedKit, filterValue, assignments]);
 
-  return error;
+  return [error, () => setError('')] ;
 }
