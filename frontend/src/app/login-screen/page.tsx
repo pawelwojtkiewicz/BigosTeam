@@ -1,6 +1,5 @@
 'use client'
 
-
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
@@ -17,7 +16,7 @@ export default function LoginScreen() {
     },
     onSubmit: (values) => sendData(values),
   });
-  
+
   return (
     <Box
       id="login-screen"
@@ -44,9 +43,8 @@ export default function LoginScreen() {
       >
         <Stack spacing={2} sx={{ mb: 2 }}>
           <TextField
-          value={formik.values.identifier}
-          onChange={formik.handleChange}
-
+            value={formik.values.identifier}
+            onChange={formik.handleChange}
             required
             id="outlined-required"
             label="Username"
@@ -55,9 +53,8 @@ export default function LoginScreen() {
             name="identifier"
           />
           <TextField
-          value={formik.values.password}
-          onChange={formik.handleChange}
-
+            value={formik.values.password}
+            onChange={formik.handleChange}
             required
             id="outlined-disabled"
             label="Password"

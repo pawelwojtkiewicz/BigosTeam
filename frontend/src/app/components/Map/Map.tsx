@@ -9,10 +9,33 @@ import {MedKitContents} from '@/app/components/MedkitContents/MedkitContents'
 import {MyPosition} from '@/app/components/MyPosition'
 import {OpenButton} from '@/app/components/OpenButton/OpenButton'
 import DangerousEventCaller from '@/app/components/Map/DangerousEventCaller'
-import React from 'react';
+import React, {useState} from 'react';
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
+// import {MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
+import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
+// import MedKitPlaceIcon from "./MedKitPlaceIcon";
+// import { Map as MapType } from 'leaflet'
+import { getInformationAboutNewDangerousEvent } from '@/app/login-screen/action'
+
+type LatLng = {
+  latitude: number
+  longitude: number
+}
+
+// type Coords = [number, number];
+
+// const testCoords: Coords = [ 49.78162, 19.04727 ];
+
+const getCurrentUserPosition = (setPositionCallback: (pos: Coords) => void) => {
+  navigator.geolocation.getCurrentPosition((position) => {
+    const pos = position ?? [49.768535, 19.038870]
+    // setPositionCallback(testCoords);
+    setPositionCallback([pos.coords.latitude, pos.coords.longitude]);
+  });
+};
+
 import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 import MedKitPlaceIcon, { MedKitPlaceIconEm } from "./MedKitPlaceIcon";
 import {Map as MapType} from 'leaflet'
@@ -29,6 +52,14 @@ const Map: React.FC<MapProps> = ({
     defaultSize = defaultSizeProp,
   }) => {
 
+  const [showEventMarkers, handleEventMarkersVisibility] = useState(false);
+  const [eventMarkers, setEventMarkers] = useState([]);
+
+
+
+  // const nearestKits = useMemo<Coords[]>(() => {
+  //   return (nearestMedKits?? []).map(({ attributes: { lat, long }} : any) => [lat, long]);
+  // }, [nearestMedKits])
   const {
     currentUserPosition,
     setCurrentUserPosition,
@@ -50,6 +81,18 @@ const Map: React.FC<MapProps> = ({
     },
     assignments
   } = useMapData(defaultSize)
+
+  const handleEventMarkers = () => {
+    if (!showEventMarkers) {
+      getInformationAboutNewDangerousEvent(currentUserPosition)
+      .then((res) => {
+        setEventMarkers(res.data);
+        handleEventMarkersVisibility(true);
+      });
+    } else {
+      handleEventMarkersVisibility(false)
+    }
+  }
 
   const [poolingError, resetPoolingError] = useMedKitPooling(navigateTo, filterValue, assignments);
 
@@ -123,6 +166,27 @@ const Map: React.FC<MapProps> = ({
           </Popup>
         </Marker>
       ))}
+      {(eventMarkers && showEventMarkers) && eventMarkers.map(({id, attributes: {lat, long, summary, details, createdAt}}) => {
+          return (
+            <Marker
+              zIndexOffset={2}
+              position={[lat, long]}
+              eventHandlers={{
+                click: () => handleMarkerClick([lat, long], id),
+                popupclose: () => handlePopupClose()
+              }}
+            >
+              <Popup
+                minWidth={180}
+                maxWidth={320}
+              >
+                <h2>{summary}</h2>
+                <p>{details}</p>
+                <p>Data utworzenia: {new Date(createdAt).toLocaleString()}</p>
+              </Popup>
+            </Marker>
+          )
+        })}
       {isReady &&
         (<RoutingControl start={start} destination={dest} />)
       }
@@ -130,7 +194,8 @@ const Map: React.FC<MapProps> = ({
         setScreenSize([window.innerWidth, window.innerHeight]);
       }} />
 
-      <DangerousEventCaller currentUserPosition={currentUserPosition} />
+      <DangerousEventCaller showEventMarkers={showEventMarkers} currentUserPosition={currentUserPosition} handleEventMarkers={handleEventMarkers}/>
+      {/* <DangerousEventCaller currentUserPosition={currentUserPosition} /> */}
     </MapContainer>
     )}
     <OpenButton
