@@ -35,13 +35,50 @@ type SimpleSuppliesItem = {
   }
 }
 
-type SimpleResultItem = {
+export type ContentsItem = {
   productId: number
   qty: number
   name: string
 }
 
-type Contents = Record<number, SimpleResultItem>
+export type Contents = Record<number, ContentsItem>
+
+export const fetchContents = async (medKitId: number) => {
+  const contentsRequestUrl = getApiUrl('supplies', {
+    "filters[medKit][$eq]": medKitId,
+    "fields[0]": "id",
+    "fields[1]": "code",
+    "populate[product][fields][0]": "id",
+    "populate[product][fields][1]": "name"
+  })
+  return fetch(contentsRequestUrl)
+    .then((data) => data.json())
+    .then((json) => {
+
+      const data = simplifyResponse(json) as SimpleSuppliesItem[];
+      const contents = data.reduce((result, suppliesItem) => {
+        const { product: { name, id } } = suppliesItem;
+        const existingResult = result?.[id];
+        const incResult: ContentsItem = existingResult
+          ? {
+            ...existingResult,
+            qty: existingResult.qty + 1,
+          }
+          : {
+            productId: id,
+            name,
+            qty: 1,
+          }
+
+        return {
+          ...result,
+          [id]: incResult
+        }
+      }, {} as Record<number, ContentsItem>)
+
+      return contents
+    })
+}
 
 export const MedKitContents: React.FC<MedKitContentsProps> = ({
     medKit,
@@ -57,40 +94,8 @@ export const MedKitContents: React.FC<MedKitContentsProps> = ({
   useEffect(() => {
     if (id) {
       setContents(null);
-      const contentsRequestUrl = getApiUrl('supplies', {
-        "filters[medKit][$eq]": id,
-        "fields[0]": "id",
-        "fields[1]": "code",
-        "populate[product][fields][0]": "id",
-        "populate[product][fields][1]": "name"
-      })
-      fetch(contentsRequestUrl)
-        .then((data) => data.json())
-        .then((json) => {
-
-          const data = simplifyResponse(json) as SimpleSuppliesItem[];
-          const contents = data.reduce((result, suppliesItem) => {
-            const { product: { name, id } } = suppliesItem;
-            const existingResult = result?.[id];
-            const incResult: SimpleResultItem = existingResult
-              ? {
-                ...existingResult,
-                qty: existingResult.qty + 1,
-              }
-              : {
-                productId: id,
-                name,
-                qty: 1,
-              }
-
-            return {
-              ...result,
-              [id]: incResult
-            }
-          }, {} as Record<number, SimpleResultItem>)
-
-          setContents(contents)
-        })
+      fetchContents(id)
+        .then((contents) => setContents(contents))
     }
   }, [id]);
 

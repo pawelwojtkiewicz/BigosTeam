@@ -4,6 +4,7 @@ import {Filter} from '@/app/components/Filter/Filter'
 import {MapResize} from '@/app/components/Map/MapResize'
 import {RoutingControl} from '@/app/components/Map/RoutingControl'
 import {useMapData, Coords} from '@/app/components/Map/useMapData'
+import {useMedKitPooling} from '@/app/components/Map/useMedkitPooling'
 import {MedKitContents} from '@/app/components/MedkitContents/MedkitContents'
 import {OpenButton} from '@/app/components/OpenButton/OpenButton'
 import React from 'react';
@@ -46,6 +47,8 @@ const Map: React.FC<MapProps> = ({
     assignments
   } = useMapData(defaultSize)
 
+  const poolingError = useMedKitPooling(navigateTo, filterValue, assignments);
+
   const handleMarkerClick = (position: Coords, index: number) => {
     const kit = nearestMedKits?.[index];
     if (kit) {
@@ -66,7 +69,7 @@ const Map: React.FC<MapProps> = ({
   }
 
   const handleOpenClick = () => {
-
+    console.log('Send open medkit request...')
   }
 
   return (<>{
