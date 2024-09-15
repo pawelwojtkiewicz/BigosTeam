@@ -14,10 +14,10 @@ module.exports = createCoreService('api::med-kit.med-kit', ({ strapi }) => ({
 	  if (!distance) {
 		distance = 50;
 	  }
-  
+
 	  // fetch all available results
 	  const medkits = await strapi.entityService.findMany('api::med-kit.med-kit', {
-		fields: ['lat', 'long'],
+		fields: ['name', 'lat', 'long'],
 		filters: {
 		  $and: [
 			{
@@ -37,13 +37,13 @@ module.exports = createCoreService('api::med-kit.med-kit', ({ strapi }) => ({
 		  : {}
 		)
 	  });
-  
+
 	  function createCoordsTuple(lat, long) {
 		return [parseFloat(lat), parseFloat(long)];
 	  }
-  
+
 	  let currentDistance;
-  
+
 	  const availableMedkits = medkits.filter(medkit => {
 		currentDistance = haversine(
 		  createCoordsTuple(lat, long),
@@ -53,10 +53,9 @@ module.exports = createCoreService('api::med-kit.med-kit', ({ strapi }) => ({
 			unit: 'meter'
 		  }
 		);
-		console.log(currentDistance);
 		return currentDistance < distance;
 	  });
-  
+
 	  return {
 		entity: availableMedkits,
 		meta: {
