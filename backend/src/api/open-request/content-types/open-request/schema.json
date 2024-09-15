@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "open_requests",
+  "info": {
+    "singularName": "open-request",
+    "pluralName": "open-requests",
+    "displayName": "Open Request"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "medKit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::med-kit.med-kit"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

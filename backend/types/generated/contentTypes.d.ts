@@ -819,6 +819,44 @@ export interface ApiMedKitMedKit extends Schema.CollectionType {
   };
 }
 
+export interface ApiOpenRequestOpenRequest extends Schema.CollectionType {
+  collectionName: 'open_requests';
+  info: {
+    singularName: 'open-request';
+    pluralName: 'open-requests';
+    displayName: 'Open Request';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    medKit: Attribute.Relation<
+      'api::open-request.open-request',
+      'oneToOne',
+      'api::med-kit.med-kit'
+    >;
+    user: Attribute.Relation<
+      'api::open-request.open-request',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::open-request.open-request',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::open-request.open-request',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Schema.CollectionType {
   collectionName: 'products';
   info: {
@@ -907,6 +945,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::med-kit.med-kit': ApiMedKitMedKit;
+      'api::open-request.open-request': ApiOpenRequestOpenRequest;
       'api::product.product': ApiProductProduct;
       'api::supply.supply': ApiSupplySupply;
     }
