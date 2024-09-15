@@ -16,10 +16,10 @@ export const useMedKitPooling = (destMedKit: MedKit | null, filterValue: string,
               if (!contents[filterValue]?.qty) {
                 const prodName = (assignments as Record<string, { name: string}>)[filterValue].name;
                 setError(`Uwaga! ${prodName} nie jest dostępny!`);
-                return
+              } else {
+                queueRequest();
               }
             })
-          queueRequest();
         }, PULLING_INTERVAL)
       }
 
