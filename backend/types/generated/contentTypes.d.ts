@@ -794,6 +794,7 @@ export interface ApiEventEvent extends Schema.CollectionType {
     singularName: 'event';
     pluralName: 'events';
     displayName: 'Event';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -808,6 +809,16 @@ export interface ApiEventEvent extends Schema.CollectionType {
     lat: Attribute.Float & Attribute.Required;
     long: Attribute.Float & Attribute.Required;
     media: Attribute.Media<'images' | 'videos' | 'audios'>;
+    type: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'api::event-type.event-type'
+    >;
+    reporter: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -818,6 +829,35 @@ export interface ApiEventEvent extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiEventTypeEventType extends Schema.CollectionType {
+  collectionName: 'event_types';
+  info: {
+    singularName: 'event-type';
+    pluralName: 'event-types';
+    displayName: 'Event Type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::event-type.event-type',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::event-type.event-type',
       'oneToOne',
       'admin::user'
     > &
@@ -1020,6 +1060,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::event.event': ApiEventEvent;
+      'api::event-type.event-type': ApiEventTypeEventType;
       'api::med-kit.med-kit': ApiMedKitMedKit;
       'api::open-request.open-request': ApiOpenRequestOpenRequest;
       'api::product.product': ApiProductProduct;
