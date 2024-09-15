@@ -134,7 +134,6 @@ export const useMapData = (defaultSize: [number, number]): UseMapDataResult => {
         fetch(dataUrl)
             .then((data) => data.json())
             .then((res) => {
-              console.log('!!! Data', res);
               setNearestMedKits(res.data);
             })
         }, 0)

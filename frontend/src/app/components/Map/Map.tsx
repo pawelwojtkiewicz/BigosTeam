@@ -12,7 +12,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
-import MedKitPlaceIcon from "./MedKitPlaceIcon";
+import MedKitPlaceIcon, { MedKitPlaceIconEm } from "./MedKitPlaceIcon";
 import {Map as MapType} from 'leaflet'
 
 type MapProps = {
@@ -30,6 +30,7 @@ const Map: React.FC<MapProps> = ({
     setDestination,
     selectedKit,
     setSelectedKit,
+    navigateTo,
     setNavigateTo,
     nearestKits,
     nearestMedKits,
@@ -91,7 +92,11 @@ const Map: React.FC<MapProps> = ({
         <Marker
           zIndexOffset={2}
           position={position}
-          icon={MedKitPlaceIcon}
+          icon={
+            position.join('') === `${navigateTo?.attributes.lat}${navigateTo?.attributes.long}`
+              ? MedKitPlaceIconEm
+              : MedKitPlaceIcon
+          }
           eventHandlers={{
             click: () => handleMarkerClick(position, index),
             popupclose: () => handlePopupClose()
