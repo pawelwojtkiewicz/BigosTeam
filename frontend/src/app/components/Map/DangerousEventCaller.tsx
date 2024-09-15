@@ -1,6 +1,6 @@
 'use client'
 
-import * as React from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import { styled } from '@mui/material/styles';
@@ -10,11 +10,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -30,7 +29,11 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const DangerousEventCaller: React.FC<> = ({ currentUserPosition }) => {
+type DangerousEventCallerProps = {
+  currentUserPosition: [number, number]
+}
+
+const DangerousEventCaller: React.FC<DangerousEventCallerProps> = ({ currentUserPosition }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -42,14 +45,13 @@ const DangerousEventCaller: React.FC<> = ({ currentUserPosition }) => {
 
     const formik = useFormik({
         initialValues: {
-            summary: 'aaaaa',
-            details: 'aaaa',
+            summary: '',
+            details: '',
             type: { connect: [4] },
             lat: 12,
             long: 12,
         },
         onSubmit: (values) => sendData2(values)
-        
     });
 
     return (
@@ -132,16 +134,16 @@ const DangerousEventCaller: React.FC<> = ({ currentUserPosition }) => {
                 </Button>
             </DialogActions>
             </BootstrapDialog>
-            <Button 
+            <Button
                 onClick={handleClickOpen}
-                variant="contained" 
+                variant="contained"
                 sx={{
-                    position: 'fixed', 
+                    position: 'fixed',
                     bottom: 0,
-                    zIndex: 9999// 
+                    zIndex: 9999//
                 }}
                 endIcon={<SendIcon />}>
-                    Send
+                  Zgłoś
             </Button>
         </>
     );
