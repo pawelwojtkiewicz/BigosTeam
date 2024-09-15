@@ -1,0 +1,17 @@
+.popupContent {
+  .supplyFail {
+    color: #d00000;
+  }
+
+  .supplyOk {
+    color: inherit;
+  }
+
+  .navTrigger {
+    padding: 5px 10px;
+    font-weight: bold;
+    width: 80%;
+    margin: 0 10%;
+    cursor: pointer;
+  }
+}

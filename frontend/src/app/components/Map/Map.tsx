@@ -2,8 +2,9 @@
 
 import {MapResize} from '@/app/components/Map/MapResize'
 import { RoutingControl } from '@/app/components/Map/RoutingControl'
+import {MedKitContents} from '@/app/components/MedkitContents/MedkitContents'
 import {getApiUrl} from '@/app/helpers/getApiUrl'
-import React, {useState, useEffect, Dispatch, SetStateAction, useRef} from 'react';
+import React, {useState, useEffect, Dispatch, SetStateAction, useRef, useMemo} from 'react';
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
@@ -25,10 +26,6 @@ const getCurrentUserPosition = (setPositionCallback: (pos: Coords) => void) => {
   });
 };
 
-const getNearestKits = (res: { data: any; }) => {
-  const nearestKits = res.data;
-  return nearestKits.map(({ attributes: { lat, long }} : any) => [lat, long]);
-}
 
 type MapProps = {
   defaultSize?: [number, number]
@@ -62,7 +59,12 @@ const Map: React.FC<MapProps> = ({
   const [currentUserPosition, setCurrentUserPosition] = useState<[number, number] | null>(null);
   const [destination, setDestination] = useState<[number, number] | null>(null);
   const [selectedKit, setSelectedKit] = useState<any | null>(null);
-  const [nearestKits, setNearestKits] = useState<any[] | null>(null);
+  const [nearestMedKits, setNearestMedKits] = useState<any[] | null>(null);
+
+  const nearestKits = useMemo<Coords[]>(() => {
+    return (nearestMedKits?? []).map(({ attributes: { lat, long }} : any) => [lat, long]);
+  }, [nearestMedKits])
+
   useEffect(() => {
     setScreenSize([window.innerWidth, window.innerHeight]);
     getCurrentUserPosition((latLng) => {
@@ -76,22 +78,26 @@ const Map: React.FC<MapProps> = ({
         fetch(url)
           .then((data) => data.json())
           .then((res) => {
-            const _nearestKits = getNearestKits(res);
-            setNearestKits(_nearestKits);
+            setNearestMedKits(res.data);
         })
       }, 0)
     });
   }, []);
 
   const [screenSize, setScreenSize] = useState<[number, number]>(defaultSize);
-  const { start, dest, isReady } = convertRouteCoords(currentUserPosition, destination)
+  const { start, dest, isReady } = convertRouteCoords(currentUserPosition, destination);
 
   const handleMarkerClick = (position: Coords, index: number) => {
-    const kit = nearestKits?.[index];
+    const kit = nearestMedKits?.[index];
     if (kit) {
       setSelectedKit(kit)
       setDestination(position);
     }
+  }
+
+  const handlePopupClose = () => {
+    setSelectedKit(false);
+    setDestination(null);
   }
 
   return (
@@ -118,10 +124,14 @@ const Map: React.FC<MapProps> = ({
           icon={MedKitPlaceIcon}
           eventHandlers={{
             click: () => handleMarkerClick(position, index),
+            popupclose: () => handlePopupClose()
           }}
         >
-          <Popup>
-            This Marker icon is displayed correctly with <i>leaflet-defaulticon-compatibility</i>.
+          <Popup
+            minWidth={180}
+            maxWidth={320}
+          >
+            <MedKitContents medKit={selectedKit} />
           </Popup>
         </Marker>
       ))}
