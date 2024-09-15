@@ -130,7 +130,7 @@ const Map: React.FC<MapProps> = ({
         setScreenSize([window.innerWidth, window.innerHeight]);
       }} />
 
-      <DangerousEventCaller currentUserPosition={currentUserPosition}/>
+      <DangerousEventCaller currentUserPosition={currentUserPosition} />
     </MapContainer>
     )}
     <OpenButton
