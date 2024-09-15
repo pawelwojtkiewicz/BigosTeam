@@ -886,6 +886,43 @@ export interface ApiProductProduct extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductAssignmentProductAssignment
+  extends Schema.SingleType {
+  collectionName: 'product_assignments';
+  info: {
+    singularName: 'product-assignment';
+    pluralName: 'product-assignments';
+    displayName: 'Product Assignment';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    entries: Attribute.Component<'product.assigned-product', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-assignment.product-assignment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-assignment.product-assignment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSupplySupply extends Schema.CollectionType {
   collectionName: 'supplies';
   info: {
@@ -947,6 +984,7 @@ declare module '@strapi/types' {
       'api::med-kit.med-kit': ApiMedKitMedKit;
       'api::open-request.open-request': ApiOpenRequestOpenRequest;
       'api::product.product': ApiProductProduct;
+      'api::product-assignment.product-assignment': ApiProductAssignmentProductAssignment;
       'api::supply.supply': ApiSupplySupply;
     }
   }

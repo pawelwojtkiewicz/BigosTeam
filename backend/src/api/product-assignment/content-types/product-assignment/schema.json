@@ -1,0 +1,22 @@
+{
+  "kind": "singleType",
+  "collectionName": "product_assignments",
+  "info": {
+    "singularName": "product-assignment",
+    "pluralName": "product-assignments",
+    "displayName": "Product Assignment"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "entries": {
+      "type": "component",
+      "repeatable": true,
+      "component": "product.assigned-product",
+      "required": true,
+      "min": 1
+    }
+  }
+}
