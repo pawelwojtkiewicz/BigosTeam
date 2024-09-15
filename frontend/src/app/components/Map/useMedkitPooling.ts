@@ -2,7 +2,7 @@ import {Assignments} from '@/app/components/Map/useMapData'
 import {ContentsItem, fetchContents, MedKit} from '@/app/components/MedkitContents/MedkitContents'
 import {useEffect, useRef, useState} from 'react'
 
-const PULLING_INTERVAL = 1000
+const PULLING_INTERVAL = 5000
 export const useMedKitPooling = (destMedKit: MedKit | null, filterValue: string, assignments: Assignments | null): [string, () => void] => {
   const pulling = useRef<NodeJS.Timeout>()
   const [error, setError] = useState<string>('');

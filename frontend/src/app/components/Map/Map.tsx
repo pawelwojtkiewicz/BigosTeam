@@ -6,6 +6,7 @@ import {RoutingControl} from '@/app/components/Map/RoutingControl'
 import {useMapData, Coords} from '@/app/components/Map/useMapData'
 import {useMedKitPooling} from '@/app/components/Map/useMedkitPooling'
 import {MedKitContents} from '@/app/components/MedkitContents/MedkitContents'
+import {MyPosition} from '@/app/components/MyPosition'
 import {OpenButton} from '@/app/components/OpenButton/OpenButton'
 import DangerousEventCaller from '@/app/components/Map/DangerousEventCaller'
 import React from 'react';
@@ -13,7 +14,6 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
-import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
 import MedKitPlaceIcon, { MedKitPlaceIconEm } from "./MedKitPlaceIcon";
 import {Map as MapType} from 'leaflet'
 import {PopUp as ErrorPopup} from '@/app/components/PopUp/PopUp'
@@ -31,6 +31,7 @@ const Map: React.FC<MapProps> = ({
 
   const {
     currentUserPosition,
+    setCurrentUserPosition,
     setDestination,
     selectedKit,
     setSelectedKit,
@@ -89,14 +90,13 @@ const Map: React.FC<MapProps> = ({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker
-        position={currentUserPosition}
-        icon={CurrentUserPositionIcon}
-        zIndexOffset={-1}
-      >
-      </Marker>
+      <MyPosition
+        current={currentUserPosition}
+        onChange={setCurrentUserPosition}
+      />
       {(nearestKits ?? []).map((position, index) => (
         <Marker
+          key={`${position}-${index}`}
           zIndexOffset={2}
           position={position}
           icon={
