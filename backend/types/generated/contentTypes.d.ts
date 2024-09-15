@@ -788,6 +788,43 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiEventEvent extends Schema.CollectionType {
+  collectionName: 'events';
+  info: {
+    singularName: 'event';
+    pluralName: 'events';
+    displayName: 'Event';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    summary: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    details: Attribute.Text;
+    lat: Attribute.Float & Attribute.Required;
+    long: Attribute.Float & Attribute.Required;
+    media: Attribute.Media<'images' | 'videos' | 'audios'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::event.event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiMedKitMedKit extends Schema.CollectionType {
   collectionName: 'med_kits';
   info: {
@@ -982,6 +1019,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::event.event': ApiEventEvent;
       'api::med-kit.med-kit': ApiMedKitMedKit;
       'api::open-request.open-request': ApiOpenRequestOpenRequest;
       'api::product.product': ApiProductProduct;
