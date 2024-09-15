@@ -61,7 +61,7 @@ const Map: React.FC<MapProps> = ({
   }) => {
   const [currentUserPosition, setCurrentUserPosition] = useState<[number, number] | null>(null);
   const [destination, setDestination] = useState<[number, number] | null>(null);
-  const [selectedKit, setSelectedKit] = useState<number | null>(null);
+  const [selectedKit, setSelectedKit] = useState<any | null>(null);
   const [nearestKits, setNearestKits] = useState<any[] | null>(null);
   useEffect(() => {
     setScreenSize([window.innerWidth, window.innerHeight]);
@@ -89,6 +89,7 @@ const Map: React.FC<MapProps> = ({
   const handleMarkerClick = (position: Coords, index: number) => {
     const kit = nearestKits?.[index];
     if (kit) {
+      setSelectedKit(kit)
       setDestination(position);
     }
   }
