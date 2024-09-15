@@ -13,7 +13,8 @@ import "leaflet-defaulticon-compatibility";
 import {MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
 import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
 import MedKitPlaceIcon from "./MedKitPlaceIcon";
-import {Map as MapType} from 'leaflet'
+import { Map as MapType } from 'leaflet'
+import { getInformationAboutNewDangerousEvent } from '@/app/login-screen/action'
 
 type LatLng = {
   latitude: number
@@ -72,6 +73,21 @@ const Map: React.FC<MapProps> = ({
   const [selectedKit, setSelectedKit] = useState<any | null>(null);
   const [nearestMedKits, setNearestMedKits] = useState<any[] | null>(null);
   const [navigateTo, setNavigateTo] = useState<MedKit | null>(null)
+
+  const [showEventMarkers, handleEventMarkersVisibility] = useState(false);
+  const [eventMarkers, setEventMarkers] = useState([]);
+
+  const handleEventMarkers = () => {
+    if (!showEventMarkers) {
+      getInformationAboutNewDangerousEvent(currentUserPosition)
+      .then((res) => {
+        setEventMarkers(res.data);
+        handleEventMarkersVisibility(true);
+      });
+    } else {
+      handleEventMarkersVisibility(false)
+    }
+  }
 
   const nearestKits = useMemo<Coords[]>(() => {
     return (nearestMedKits?? []).map(({ attributes: { lat, long }} : any) => [lat, long]);
@@ -165,6 +181,27 @@ const Map: React.FC<MapProps> = ({
           </Popup>
         </Marker>
       ))}
+      {(eventMarkers && showEventMarkers) && eventMarkers.map(({id, attributes: {lat, long, summary, details, createdAt}}) => {
+          return (
+            <Marker
+              zIndexOffset={2}
+              position={[lat, long]}
+              eventHandlers={{
+                click: () => handleMarkerClick([lat, long], id),
+                popupclose: () => handlePopupClose()
+              }}
+            >
+              <Popup
+                minWidth={180}
+                maxWidth={320}
+              >
+                <h2>{summary}</h2>
+                <p>{details}</p>
+                <p>Data utworzenia: {new Date(createdAt).toLocaleString()}</p>
+              </Popup>
+            </Marker>
+          )
+        })}
       {isReady &&
         (<RoutingControl start={start} destination={dest} />)
       }
@@ -172,7 +209,7 @@ const Map: React.FC<MapProps> = ({
         setScreenSize([window.innerWidth, window.innerHeight]);
       }} />
 
-      <DangerousEventCaller currentUserPosition={currentUserPosition}/>
+      <DangerousEventCaller showEventMarkers={showEventMarkers} currentUserPosition={currentUserPosition} handleEventMarkers={handleEventMarkers}/>
     </MapContainer>
     )}
     <OpenButton onOpenClick={handleOpenClick} distantCoords={currentUserPosition} list={nearestMedKits} />

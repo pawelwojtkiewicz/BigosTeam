@@ -1,6 +1,6 @@
 'use client'
 
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import { styled } from '@mui/material/styles';
@@ -19,7 +19,7 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useFormik } from 'formik';
-import { sendData2 } from '@/app/login-screen/action'
+import { sendInformationAboutNewDangerousEvent, getItemsForEventTypesSelect } from '@/app/login-screen/action'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -30,27 +30,36 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const DangerousEventCaller: React.FC<> = ({ currentUserPosition }) => {
-    const [open, setOpen] = React.useState(false);
+const DangerousEventCaller: React.FC<> = ({ showEventMarkers, currentUserPosition, handleEventMarkers }) => {
+    const [open, setOpen] = useState(false);
+    const [selectTypes, setSelectTypes] = useState([]);
 
     const handleClickOpen = () => {
-      setOpen(true);
+        setOpen(true);
     };
     const handleClose = () => {
-     setOpen(false);
+        setOpen(false);
     };
 
     const formik = useFormik({
         initialValues: {
-            summary: 'aaaaa',
-            details: 'aaaa',
-            type: { connect: [4] },
-            lat: 12,
-            long: 12,
+            summary: '',
+            details: '',
+            type: 4,
+            lat: currentUserPosition[0],
+            long: currentUserPosition[1],
         },
-        onSubmit: (values) => sendData2(values)
-        
+        onSubmit: (values) => sendInformationAboutNewDangerousEvent(values),
     });
+
+    useEffect(() => {
+        getItemsForEventTypesSelect()
+        .then((res) => {
+            const mappedSelectTypes = res.data.map(({ id, attributes: { name }}) => ({id, name}));
+            console.log(mappedSelectTypes)
+            setSelectTypes(mappedSelectTypes);
+        });
+    }, []);
 
     return (
         <>
@@ -117,32 +126,39 @@ const DangerousEventCaller: React.FC<> = ({ currentUserPosition }) => {
                                 value={formik.values.type}
                                 label="Typ zgłoszenia"
                                 onChange={formik.handleChange}
+                                name="type"
                             >
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                {selectTypes.map(({id, name}) => <MenuItem key={id} value={id}>{name}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Stack>
+                    <Button type="submit" autoFocus onClick={handleClose}>
+                        Zapisz ustawienia
+                    </Button>
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button type="submit" autoFocus onClick={handleClose}>
-                    Save changes
-                </Button>
             </DialogActions>
             </BootstrapDialog>
-            <Button 
-                onClick={handleClickOpen}
-                variant="contained" 
+            <Stack
+                spacing={2}
+                direction="row"
                 sx={{
                     position: 'fixed', 
                     bottom: 0,
-                    zIndex: 9999// 
-                }}
-                endIcon={<SendIcon />}>
-                    Send
-            </Button>
+                    zIndex: 9999
+                }}>
+                <Button 
+                    onClick={handleClickOpen}
+                    variant="contained">
+                        Zgłoś zdarzenie
+                </Button>
+                <Button
+                    onClick={handleEventMarkers}
+                    variant="contained">
+                        {showEventMarkers ? 'Schowaj' : 'Pokaż'} zdarzenia
+                </Button>
+            </Stack>
         </>
     );
 }
