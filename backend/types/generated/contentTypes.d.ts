@@ -946,6 +946,7 @@ export interface ApiSupplySupply extends Schema.CollectionType {
       'oneToOne',
       'api::product.product'
     >;
+    cost: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
