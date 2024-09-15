@@ -10,6 +10,7 @@ import Blik from './components/Blik/Blik';
 import Image from 'next/image';
 import LoginScreen from './login-screen/page';
 import { logout } from './components/logout/action';
+import BlikSvg from './public/images/blik.svg';
 
 const links = [
   { name: 'Login', href: '/login-screen', icon: UserIcon }
