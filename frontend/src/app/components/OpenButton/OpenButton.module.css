@@ -1,0 +1,12 @@
+.openTrigger {
+  position: fixed;
+  padding: 10px 20px;
+  font-size: 18px;
+  text-transform: uppercase;
+  bottom: 10px;
+  left: 50%;
+  background-color: darkgreen;
+  z-index: 2000;
+  transform: translateX(-50%);
+  cursor: pointer;
+}

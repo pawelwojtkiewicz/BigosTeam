@@ -1,3 +1,5 @@
+'use client'
+
 import {useResizeMap} from '@/app/hooks/useResizeMap'
 import {useMap} from 'react-leaflet'
 import React from 'react'

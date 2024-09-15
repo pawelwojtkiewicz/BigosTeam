@@ -7,11 +7,15 @@
     color: inherit;
   }
 
-  .navTrigger {
+  .navTrigger, .openTrigger {
     padding: 5px 10px;
     font-weight: bold;
     width: 80%;
     margin: 0 10%;
     cursor: pointer;
+  }
+
+  .openTrigger {
+    background-color: darkgreen;
   }
 }

@@ -2,7 +2,8 @@
 
 import {MapResize} from '@/app/components/Map/MapResize'
 import { RoutingControl } from '@/app/components/Map/RoutingControl'
-import {MedKitContents} from '@/app/components/MedkitContents/MedkitContents'
+import {MedKitContents, MedKit} from '@/app/components/MedkitContents/MedkitContents'
+import {OpenButton} from '@/app/components/OpenButton/OpenButton'
 import {getApiUrl} from '@/app/helpers/getApiUrl'
 import React, {useState, useEffect, Dispatch, SetStateAction, useRef, useMemo} from 'react';
 import "leaflet/dist/leaflet.css";
@@ -11,6 +12,7 @@ import "leaflet-defaulticon-compatibility";
 import {MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet';
 import CurrentUserPositionIcon from "./CurrentUserPositionIcon";
 import MedKitPlaceIcon from "./MedKitPlaceIcon";
+import {Map as MapType} from 'leaflet'
 
 type LatLng = {
   latitude: number
@@ -19,9 +21,12 @@ type LatLng = {
 
 type Coords = [number, number];
 
+// const testCoords: Coords = [ 49.78162, 19.04727 ];
+
 const getCurrentUserPosition = (setPositionCallback: (pos: Coords) => void) => {
   navigator.geolocation.getCurrentPosition((position) => {
     const pos = position ?? [49.768535, 19.038870]
+    // setPositionCallback(testCoords);
     setPositionCallback([pos.coords.latitude, pos.coords.longitude]);
   });
 };
@@ -53,6 +58,11 @@ const convertRouteCoords = (startingPoint: Coords | null, destinationPoint: Coor
   }
 }
 
+const getCoordsFromKit = (kit: MedKit | null): null | Coords => {
+  if (!kit) return null;
+  return [kit.attributes.lat, kit.attributes.long];
+}
+
 const Map: React.FC<MapProps> = ({
     defaultSize = defaultSizeProp,
   }) => {
@@ -60,6 +70,7 @@ const Map: React.FC<MapProps> = ({
   const [destination, setDestination] = useState<[number, number] | null>(null);
   const [selectedKit, setSelectedKit] = useState<any | null>(null);
   const [nearestMedKits, setNearestMedKits] = useState<any[] | null>(null);
+  const [navigateTo, setNavigateTo] = useState<MedKit | null>(null)
 
   const nearestKits = useMemo<Coords[]>(() => {
     return (nearestMedKits?? []).map(({ attributes: { lat, long }} : any) => [lat, long]);
@@ -85,10 +96,12 @@ const Map: React.FC<MapProps> = ({
   }, []);
 
   const [screenSize, setScreenSize] = useState<[number, number]>(defaultSize);
-  const { start, dest, isReady } = convertRouteCoords(currentUserPosition, destination);
+  const routeDest = destination ?? getCoordsFromKit(navigateTo)
+  const { start, dest, isReady } = convertRouteCoords(currentUserPosition, routeDest);
 
   const handleMarkerClick = (position: Coords, index: number) => {
     const kit = nearestMedKits?.[index];
+    console.log(position)
     if (kit) {
       setSelectedKit(kit)
       setDestination(position);
@@ -100,7 +113,16 @@ const Map: React.FC<MapProps> = ({
     setDestination(null);
   }
 
-  return (
+  const handleStartNavigation = (map: MapType) => {
+    setNavigateTo(selectedKit);
+    map.closePopup();
+  }
+
+  const handleOpenClick = () => {
+
+  }
+
+  return (<>{
     (currentUserPosition) && (
     <MapContainer
       center={currentUserPosition}
@@ -116,10 +138,12 @@ const Map: React.FC<MapProps> = ({
       <Marker
         position={currentUserPosition}
         icon={CurrentUserPositionIcon}
+        zIndexOffset={-1}
       >
       </Marker>
-      {nearestKits && nearestKits.map((position, index) => (
+      {(nearestKits ?? []).map((position, index) => (
         <Marker
+          zIndexOffset={2}
           position={position}
           icon={MedKitPlaceIcon}
           eventHandlers={{
@@ -131,7 +155,12 @@ const Map: React.FC<MapProps> = ({
             minWidth={180}
             maxWidth={320}
           >
-            <MedKitContents medKit={selectedKit} />
+            <MedKitContents
+              distantCoords={currentUserPosition}
+              medKit={selectedKit}
+              onNavClick={handleStartNavigation}
+              onOpenClick={handleOpenClick}
+            />
           </Popup>
         </Marker>
       ))}
@@ -142,8 +171,9 @@ const Map: React.FC<MapProps> = ({
         setScreenSize([window.innerWidth, window.innerHeight]);
       }} />
     </MapContainer>
-  )
-  );
+    )}
+    <OpenButton onOpenClick={handleOpenClick} distantCoords={currentUserPosition} list={nearestMedKits} />
+  </>);
 }
 
 export default Map;

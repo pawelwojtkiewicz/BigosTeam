@@ -1,6 +1,11 @@
+'use client'
+
+import {areCoordinatesNear} from '@/app/helpers/areCoordinatesNear'
 import {getApiUrl} from '@/app/helpers/getApiUrl'
 import {simplifyResponse} from '@/app/helpers/simplifyResponse'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
+import {useMap} from 'react-leaflet'
+import {Map} from 'leaflet'
 import styles from "./MedkitContents.module.css"
 
 export type MedKit = {
@@ -14,7 +19,9 @@ export type MedKit = {
 
 type MedKitContentsProps = {
   medKit: MedKit | null,
-  onNavClick?: () => void
+  onNavClick?: (map: Map) => void,
+  onOpenClick?: (id: number) => void,
+  distantCoords?: [number, number]
 }
 
 type SimpleSuppliesItem = {
@@ -57,10 +64,13 @@ type Assignments = Record<number, SimpleAssignment>
 
 export const MedKitContents: React.FC<MedKitContentsProps> = ({
     medKit,
-    onNavClick
+    onNavClick,
+    onOpenClick,
+    distantCoords
   }) => {
   const [contents, setContents] = useState<Contents | null>(null);
   const [assignments, setAssignments] = useState<Assignments | null>(null);
+  const map = useMap();
 
   const id = medKit?.id ?? 0
   useEffect(() => {
@@ -133,22 +143,36 @@ export const MedKitContents: React.FC<MedKitContentsProps> = ({
     }
   }, [assignments, contents]);
 
+  const isNear = useMemo(() => !!distantCoords && !!medKit
+    ? areCoordinatesNear(
+        distantCoords,
+        [medKit.attributes.lat, medKit.attributes.long]
+      )
+    : false
+    , [distantCoords, medKit])
+
   return !contents || !assignments
     ? '...'
     : <div className={styles.popupContent}>
         <ol>
           {Object.values(assignments).map(({id, name, quantity: expectedQty}) => {
             const existingQty = contents[id]?.qty ?? 0
-            return <li className={!existingQty ? styles.supplyFail : styles.supplyOk}>
+            return <li className={!existingQty ? styles.supplyFail : styles.supplyOk} key={id}>
               <strong>{name}</strong>
               {' '}({existingQty} / {expectedQty})
             </li>
           })}
         </ol>
         <br />
-        <button
-          onClick={onNavClick}
-          className={styles.navTrigger}
-        >{` NAWIGUJ `}</button>
-    </div>
-}
+          {(isNear && medKit?.id)
+            ? <button
+              onClick={() => onOpenClick && onOpenClick(medKit.id)}
+              className={styles.openTrigger}
+            >{` OTWÓRZ `}</button>
+            : <button
+              onClick={() => onNavClick && onNavClick(map)}
+              className={styles.navTrigger}
+            >{` NAWIGUJ `}</button>
+          }
+          </div>
+        }
