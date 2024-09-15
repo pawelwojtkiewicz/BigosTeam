@@ -4,6 +4,7 @@ import {MapResize} from '@/app/components/Map/MapResize'
 import { RoutingControl } from '@/app/components/Map/RoutingControl'
 import {MedKitContents, MedKit} from '@/app/components/MedkitContents/MedkitContents'
 import {OpenButton} from '@/app/components/OpenButton/OpenButton'
+import DangerousEventCaller from '@/app/components/Map/DangerousEventCaller';
 import {getApiUrl} from '@/app/helpers/getApiUrl'
 import React, {useState, useEffect, Dispatch, SetStateAction, useRef, useMemo} from 'react';
 import "leaflet/dist/leaflet.css";
@@ -170,6 +171,8 @@ const Map: React.FC<MapProps> = ({
       <MapResize onResize={() => {
         setScreenSize([window.innerWidth, window.innerHeight]);
       }} />
+
+      <DangerousEventCaller currentUserPosition={currentUserPosition}/>
     </MapContainer>
     )}
     <OpenButton onOpenClick={handleOpenClick} distantCoords={currentUserPosition} list={nearestMedKits} />
