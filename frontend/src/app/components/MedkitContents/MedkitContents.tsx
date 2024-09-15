@@ -1,5 +1,6 @@
 'use client'
 
+import {Assignments} from '@/app/components/Map/useMapData'
 import {areCoordinatesNear} from '@/app/helpers/areCoordinatesNear'
 import {getApiUrl} from '@/app/helpers/getApiUrl'
 import {simplifyResponse} from '@/app/helpers/simplifyResponse'
@@ -18,10 +19,11 @@ export type MedKit = {
 }
 
 type MedKitContentsProps = {
-  medKit: MedKit | null,
-  onNavClick?: (map: Map) => void,
-  onOpenClick?: (id: number) => void,
+  medKit: MedKit | null
+  onNavClick?: (map: Map) => void
+  onOpenClick?: (id: number) => void
   distantCoords?: [number, number]
+  assignments: Assignments | null
 }
 
 type SimpleSuppliesItem = {
@@ -34,49 +36,27 @@ type SimpleSuppliesItem = {
 }
 
 type SimpleResultItem = {
-  productId: number,
-  qty: number,
+  productId: number
+  qty: number
   name: string
 }
 
 type Contents = Record<number, SimpleResultItem>
 
-type SimpleAsgItem = {
-  id: number,
-  quantity: number,
-  product: {
-    data: {
-      id: number,
-      attributes: {
-        name: string
-      }
-    }
-  }
-}
-
-type SimpleAssignment = {
-  id: number
-  name: string
-  quantity: number
-}
-
-type Assignments = Record<number, SimpleAssignment>
-
 export const MedKitContents: React.FC<MedKitContentsProps> = ({
     medKit,
     onNavClick,
     onOpenClick,
-    distantCoords
+    distantCoords,
+    assignments
   }) => {
   const [contents, setContents] = useState<Contents | null>(null);
-  const [assignments, setAssignments] = useState<Assignments | null>(null);
   const map = useMap();
 
   const id = medKit?.id ?? 0
   useEffect(() => {
     if (id) {
       setContents(null);
-      setAssignments(null);
       const contentsRequestUrl = getApiUrl('supplies', {
         "filters[medKit][$eq]": id,
         "fields[0]": "id",
@@ -110,29 +90,6 @@ export const MedKitContents: React.FC<MedKitContentsProps> = ({
           }, {} as Record<number, SimpleResultItem>)
 
           setContents(contents)
-        })
-
-      const assignmentsRequestUrl = getApiUrl('product-assignment', {
-        "populate[0]": 'entries',
-        "populate[1]": 'entries.product'
-      });
-      fetch(assignmentsRequestUrl)
-        .then((data) => data.json())
-        .then((json) => {
-          const entries = (json?.data?.attributes?.entries ?? []) as SimpleAsgItem[];
-
-          const assignments = entries.reduce((result, { quantity, product: { data } }) => {
-            return {
-              ...result,
-              [data.id]: {
-                id: data.id,
-                name: data.attributes.name,
-                quantity
-              }
-            }
-          }, {} as Assignments);
-          setAssignments(assignments);
-
         })
     }
   }, [id]);
