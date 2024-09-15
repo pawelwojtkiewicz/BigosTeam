@@ -14,7 +14,7 @@ export const sendData = async (values) => {
       });
       const data = await res.json();
       cookies().set('jwt', data.jwt);
-      redirect(`../mappage`);
+      redirect(`../`);
 }
 
 export const sendInformationAboutNewDangerousEvent = async (values) => {
