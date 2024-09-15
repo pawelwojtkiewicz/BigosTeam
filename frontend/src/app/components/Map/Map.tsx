@@ -7,6 +7,7 @@ import {useMapData, Coords} from '@/app/components/Map/useMapData'
 import {useMedKitPooling} from '@/app/components/Map/useMedkitPooling'
 import {MedKitContents} from '@/app/components/MedkitContents/MedkitContents'
 import {OpenButton} from '@/app/components/OpenButton/OpenButton'
+import DangerousEventCaller from '@/app/components/Map/DangerousEventCaller'
 import React from 'react';
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
@@ -128,6 +129,8 @@ const Map: React.FC<MapProps> = ({
       <MapResize onResize={() => {
         setScreenSize([window.innerWidth, window.innerHeight]);
       }} />
+
+      <DangerousEventCaller currentUserPosition={currentUserPosition}/>
     </MapContainer>
     )}
     <OpenButton
