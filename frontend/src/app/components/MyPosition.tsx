@@ -11,15 +11,15 @@ type MyPositionProps = {
   icon?:  Icon | DivIcon
 }
 
-const POSITION_POOLING_INTERVAL = 1000
+const POSITION_POOLING_INTERVAL = 10000
 
 export const MyPosition: React.FC<MyPositionProps> = ({current, icon = CurrentUserPositionIcon, onChange}) => {
-  const timeout = useRef<NodeJS.Timeout>()
+  const delay = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
     const run = () => {
-      clearTimeout(timeout.current);
-      timeout.current = setTimeout(() => {
+      clearTimeout(delay.current);
+      delay.current = setTimeout(() => {
         // onChange([current[0] - 0.00005, current[1] - 0.00005])
         getCurrentUserPosition((latLng) => {
           if (latLng.join('') !== current.join('')) {
@@ -32,7 +32,7 @@ export const MyPosition: React.FC<MyPositionProps> = ({current, icon = CurrentUs
 
     run();
     return () => {
-      clearTimeout(timeout.current);
+      clearTimeout(delay.current);
     }
   }, [current, onChange]);
 
