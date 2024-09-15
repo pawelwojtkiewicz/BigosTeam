@@ -788,6 +788,28 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiBlikBlik extends Schema.CollectionType {
+  collectionName: 'blik';
+  info: {
+    singularName: 'blik';
+    pluralName: 'bliks';
+    displayName: 'Blik Donation';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    amount: Attribute.Integer & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::blik.blik', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::blik.blik', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiEventEvent extends Schema.CollectionType {
   collectionName: 'events';
   info: {
@@ -1059,6 +1081,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::blik.blik': ApiBlikBlik;
       'api::event.event': ApiEventEvent;
       'api::event-type.event-type': ApiEventTypeEventType;
       'api::med-kit.med-kit': ApiMedKitMedKit;

@@ -1,0 +1,24 @@
+{
+	"kind": "collectionType",
+	"collectionName": "blik",
+	"info": {
+	  "singularName": "blik",
+	  "pluralName": "bliks",
+	  "displayName": "Blik Donation"
+	},
+	"options": {
+	  "draftAndPublish": false
+	},
+	"pluginOptions": {},
+	"attributes": {
+	  "name": {
+		"type": "string",
+		"required": true
+	  },
+	  "amount": {
+		"type": "integer",
+		"required": true
+	  }
+	}
+  }
+  
