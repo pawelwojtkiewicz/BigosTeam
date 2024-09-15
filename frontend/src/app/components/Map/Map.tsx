@@ -1,5 +1,6 @@
 'use client'
 
+import {Filter} from '@/app/components/Filter/Filter'
 import {MapResize} from '@/app/components/Map/MapResize'
 import {RoutingControl} from '@/app/components/Map/RoutingControl'
 import {useMapData, Coords} from '@/app/components/Map/useMapData'
@@ -34,6 +35,8 @@ const Map: React.FC<MapProps> = ({
     nearestMedKits,
     screenSize,
     setScreenSize,
+    filterValue,
+    setFilterValue,
     routeWaypoints: {
       isReady,
       start,
@@ -116,7 +119,16 @@ const Map: React.FC<MapProps> = ({
       }} />
     </MapContainer>
     )}
-    <OpenButton onOpenClick={handleOpenClick} distantCoords={currentUserPosition} list={nearestMedKits} />
+    <OpenButton
+      onOpenClick={handleOpenClick}
+      distantCoords={currentUserPosition}
+      list={nearestMedKits}
+    />
+    <Filter
+      setFilter={setFilterValue}
+      filterValue={filterValue}
+      assignments={assignments}
+    />
   </>);
 }
 

@@ -55,6 +55,8 @@ type UseMapDataResult = {
   routeWaypoints: RouteWaypoints
   assignments: Assignments | null
   setAssignments: Dispatch<UseMapDataResult['assignments']>
+  filterValue: string
+  setFilterValue: Dispatch<UseMapDataResult['filterValue']>
 }
 
 // const testCoords: Coords = [ 49.78162, 19.04727 ];
@@ -102,6 +104,7 @@ export const useMapData = (defaultSize: [number, number]): UseMapDataResult => {
   const [nearestMedKits, setNearestMedKits] = useState<UseMapDataResult['nearestMedKits']>(null);
   const [navigateTo, setNavigateTo] = useState<UseMapDataResult['navigateTo']>(null)
   const [assignments, setAssignments] = useState<UseMapDataResult['assignments']>(null);
+  const [filterValue, setFilterValue] = useState<UseMapDataResult['filterValue']>("");
 
   const nearestKits = useMemo<UseMapDataResult['nearestKits']>(() => {
     return (nearestMedKits?? []).map(({ attributes: { lat, long }} : any) => [lat, long]);
@@ -109,17 +112,29 @@ export const useMapData = (defaultSize: [number, number]): UseMapDataResult => {
 
   useEffect(() => {
     setScreenSize([window.innerWidth, window.innerHeight]);
+  }, []);
+
+  useEffect(() => {
     getCurrentUserPosition((latLng) => {
-      setCurrentUserPosition(latLng)
+      setCurrentUserPosition(latLng);
       setTimeout(() => {
-        const url = getApiUrl('med-kit/closest', {
+        const commonParams = {
           lat: latLng[0],
           long: latLng[1],
           distance: DISTANCE
-        })
-        fetch(url)
+        }
+        const url = getApiUrl('med-kit/closest', commonParams);
+        // product/1/medKitsEquippedWith?lat=0&long=0&distance=1000
+        const filterUrl = getApiUrl(`product/${filterValue}/medKitsEquippedWith`, commonParams);
+
+        const dataUrl = !!filterValue
+          ? filterUrl
+          : url;
+
+        fetch(dataUrl)
             .then((data) => data.json())
             .then((res) => {
+              console.log('!!! Data', res);
               setNearestMedKits(res.data);
             })
         }, 0)
@@ -145,7 +160,7 @@ export const useMapData = (defaultSize: [number, number]): UseMapDataResult => {
           })
 
     });
-  }, []);
+  }, [filterValue]);
 
   const [screenSize, setScreenSize] = useState<UseMapDataResult['screenSize']>(defaultSize);
   const routeDest = destination ?? getCoordsFromKit(navigateTo)
@@ -167,6 +182,8 @@ export const useMapData = (defaultSize: [number, number]): UseMapDataResult => {
     setScreenSize,
     routeWaypoints,
     assignments,
-    setAssignments
+    setAssignments,
+    filterValue,
+    setFilterValue
   }
 }
