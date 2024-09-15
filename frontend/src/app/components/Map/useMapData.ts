@@ -1,6 +1,7 @@
+import getCurrentUserPosition from '@/app/components/Map/getCurrentUserPosition'
 import {MedKit} from '@/app/components/MedkitContents/MedkitContents'
 import {getApiUrl} from '@/app/helpers/getApiUrl'
-import {Dispatch, useEffect, useMemo, useState} from 'react'
+import {Dispatch, useEffect, useMemo, useRef, useState} from 'react'
 
 const DISTANCE = 10000;
 
@@ -58,15 +59,6 @@ type UseMapDataResult = {
   filterValue: string
   setFilterValue: Dispatch<UseMapDataResult['filterValue']>
 }
-
-// const testCoords: Coords = [ 49.78162, 19.04727 ];
-const getCurrentUserPosition = (setPositionCallback: (pos: Coords) => void) => {
-  navigator.geolocation.getCurrentPosition((position) => {
-    const pos = position ?? [49.768535, 19.038870]
-    // setPositionCallback(testCoords);
-    setPositionCallback([pos.coords.latitude, pos.coords.longitude]);
-  });
-};
 
 const convertRouteCoords = (startingPoint: Coords | null, destinationPoint: Coords | null): RouteWaypoints => {
   const [latitude, longitude] = startingPoint ?? [0, 0]
@@ -157,7 +149,6 @@ export const useMapData = (defaultSize: [number, number]): UseMapDataResult => {
             setAssignments(assignments);
 
           })
-
     });
   }, [filterValue]);
 
