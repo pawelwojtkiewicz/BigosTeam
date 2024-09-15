@@ -138,9 +138,9 @@ const DangerousEventCaller: React.FC<DangerousEventCallerProps> = ({ currentUser
                 onClick={handleClickOpen}
                 variant="contained"
                 sx={{
-                    position: 'fixed',
-                    bottom: 0,
-                    zIndex: 9999//
+                    position: 'fixed', 
+                    bottom: 10,
+                    zIndex: 9999// 
                 }}
                 endIcon={<SendIcon />}>
                   Zgłoś
