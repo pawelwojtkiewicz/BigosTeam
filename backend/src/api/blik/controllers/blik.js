@@ -20,7 +20,7 @@ module.exports = createCoreController("api::blik.blik", ({ strapi }) => ({
       return result;
     } catch (error) {
       strapi.log.error("Error in makeDonation controller:", error);
-      return ctx.internalServerError("An error occurred");
+      return ctx.internalServerError(error.message);
     }
   },
 }));

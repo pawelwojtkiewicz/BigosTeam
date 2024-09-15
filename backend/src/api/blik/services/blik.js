@@ -53,8 +53,7 @@ module.exports = createCoreService("api::blik.blik", ({ strapi }) => ({
       });
       ctx.send(response.data);
     } catch (error) {
-		console.log(error);
-      ctx.throw(500, error);
+      ctx.throw(500, error.response.data.status.codeLiteral);
     }
   }
 }));
