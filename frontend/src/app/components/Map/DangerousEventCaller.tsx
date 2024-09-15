@@ -137,7 +137,7 @@ const DangerousEventCaller: React.FC<> = ({ currentUserPosition }) => {
                 variant="contained" 
                 sx={{
                     position: 'fixed', 
-                    bottom: 0,
+                    bottom: 10,
                     zIndex: 9999// 
                 }}
                 endIcon={<SendIcon />}>
